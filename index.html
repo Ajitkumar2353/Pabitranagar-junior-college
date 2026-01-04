@@ -23,7 +23,6 @@ header{
 header h1{
   margin:0;
   font-size:36px;
-  letter-spacing:1px;
 }
 header p{
   margin-top:8px;
@@ -47,15 +46,14 @@ nav a:hover{
 
 /* HERO */
 .hero{
-  background:#ddd;
   height:260px;
+  background:#e0e0e0;
   display:flex;
   align-items:center;
   justify-content:center;
 }
 .hero h2{
   font-size:32px;
-  color:#333;
 }
 
 /* SECTION */
@@ -73,6 +71,16 @@ section{
   border-left:6px solid #ffc107;
 }
 
+/* IMAGE */
+.main-img{
+  width:100%;
+  max-width:600px;
+  display:block;
+  margin:20px auto;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
 /* GALLERY */
 .gallery{
   display:grid;
@@ -83,8 +91,8 @@ section{
   width:100%;
   height:220px;
   object-fit:contain;
-  border-radius:8px;
   background:#fafafa;
+  border-radius:8px;
   border:1px solid #ddd;
 }
 
@@ -112,7 +120,7 @@ footer{
   <p>Parabil, Odisha</p>
 </header>
 
-<!-- NAV -->
+<!-- NAVIGATION -->
 <nav>
   <a href="#notice">Notice</a>
   <a href="#about">About</a>
@@ -127,24 +135,24 @@ footer{
   <h2>Welcome to Our College</h2>
 </div>
 
-<!-- NOTICE -->
+<!-- NOTICE BOARD -->
 <section id="notice" class="notice">
   <h2>📢 Notice Board</h2>
   <p>Admission Open for Academic Session 2026</p>
 </section>
 
-<!-- ABOUT -->
+<!-- ABOUT COLLEGE -->
 <section id="about">
   <h2>🏫 About College</h2>
   <p>
-    Pabitrangar Junior College, Parabil is committed to providing quality
-    higher secondary education with discipline and academic excellence.
+    Pabitrangar Junior College, Parabil is a reputed higher secondary institution
+    dedicated to academic excellence, discipline, and overall student development.
   </p>
 
-  <!-- SCREENSHOT PNG PROPER FIT -->
-  <img src="images/Screenshot_20260104-124738.png"
-       style="width:100%; max-width:600px; display:block; margin:20px auto; border-radius:8px;"
-       alt="College Screenshot">
+  <!-- PNG SCREENSHOT (CORRECT PATH) -->
+  <img src="img/Screenshot_20260104-124738.png"
+       alt="College Screenshot"
+       class="main-img">
 </section>
 
 <!-- COURSES -->
@@ -153,22 +161,22 @@ footer{
   <ul>
     <li>+2 Arts</li>
     <li>+2 Science</li>
-    <li>+2 Vocational </li>
+    <li>+2 Commerce</li>
   </ul>
 </section>
 
-<!-- HOURS -->
+<!-- COLLEGE HOURS -->
 <section id="hours">
   <h2>⏰ College Hours</h2>
   <p>Monday – Saturday: <strong>9:00 AM – 4:00 PM</strong></p>
   <p>Sunday: <strong>Closed</strong></p>
 </section>
 
-<!-- GALLERY -->
+<!-- PHOTO GALLERY -->
 <section id="gallery">
   <h2>🖼️ Photo Gallery</h2>
   <div class="gallery">
-    <img src="images/Screenshot_20260104-124738.png" alt="College Image">
+    <img src="img/Screenshot_20260104-124738.png" alt="College Image">
   </div>
 </section>
 
@@ -177,9 +185,10 @@ footer{
   <h2>📞 Contact Details</h2>
   <p><strong>Address:</strong> Pabitrangar Junior College, Parabil, Odisha</p>
   <p><strong>Phone:</strong> +91 XXXXX XXXXX</p>
-  <p><strong>Email:</strong> pabitrangarjrcollege@gmail.com</p>
+  <p><strong>Email:</strong> info@pabitrangarcollege.in</p>
 </section>
 
+<!-- FOOTER -->
 <footer>
   © 2026 Pabitrangar Junior College, Parabil
 </footer>
