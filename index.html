@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🎙️ Text to Speech Demo – OpenAI.fm जैसा</title>
+  <title>🗣️ Text to Speech + MP3 Download | English & Hindi</title>
   <style>
     * {
       margin: 0;
@@ -11,192 +11,194 @@
       box-sizing: border-box;
     }
     body {
-      background: linear-gradient(145deg, #0a0c12 0%, #12161f 100%);
+      background: linear-gradient(145deg, #0e1120, #191e30);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
       padding: 20px;
     }
     .card {
       max-width: 700px;
       width: 100%;
-      background: rgba(20, 25, 40, 0.85);
+      background: rgba(18, 22, 40, 0.9);
       backdrop-filter: blur(12px);
       border-radius: 2rem;
-      padding: 2rem;
-      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+      padding: 1.8rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 35px -12px black;
     }
     h1 {
-      font-size: 1.9rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #fff, #a0c4ff);
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #fff, #90e0ff);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      margin-bottom: 0.5rem;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      flex-wrap: wrap;
     }
-    .sub {
-      color: #8a9bcf;
-      margin-bottom: 1.8rem;
-      border-left: 3px solid #3b82f6;
-      padding-left: 1rem;
-      font-size: 0.9rem;
+    .lang-badge {
+      background: #2d3b5a;
+      font-size: 0.7rem;
+      padding: 4px 12px;
+      border-radius: 40px;
+      color: #bbd7ff;
     }
     textarea {
       width: 100%;
-      background: #0f111c;
-      border: 1px solid #2a3348;
-      border-radius: 1.5rem;
-      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      background: #0b0f1a;
+      border: 1px solid #2a3448;
+      border-radius: 1.2rem;
+      padding: 1rem;
+      color: #f0f3ff;
       font-size: 1rem;
       font-family: inherit;
-      color: #f0f3ff;
       resize: vertical;
       outline: none;
-      transition: 0.2s;
     }
     textarea:focus {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+      box-shadow: 0 0 0 3px #3b82f640;
     }
-    .control-bar {
-      margin: 1.5rem 0 1rem;
+    .controls {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      align-items: center;
       justify-content: space-between;
+      margin: 15px 0;
     }
-    .voice-selector {
-      background: #171e2c;
-      padding: 0.5rem 1rem;
-      border-radius: 2rem;
-      border: none;
+    .lang-selector {
+      background: #111722;
+      padding: 6px 15px;
+      border-radius: 3rem;
+      border: 1px solid #334155;
       color: white;
-      font-size: 0.85rem;
+      font-weight: 500;
       outline: none;
-      cursor: pointer;
     }
     button {
-      background: #3b82f6;
+      background: #2d3a5e;
       border: none;
-      padding: 0.6rem 1.5rem;
-      border-radius: 2rem;
+      padding: 8px 20px;
+      border-radius: 3rem;
       font-weight: 600;
-      font-size: 0.9rem;
       color: white;
       cursor: pointer;
       transition: 0.1s;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-    button:active {
-      transform: translateY(2px);
+    button:active { transform: translateY(2px); }
+    .btn-speak { background: #3b82f6; }
+    .btn-download { background: #10b981; }
+    .voice-row {
+      background: #0c1020;
+      border-radius: 2rem;
+      padding: 10px 15px;
+      margin: 15px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .btn-secondary {
-      background: #2d3a5e;
-    }
-    .btn-stop {
-      background: #dc2626;
+    select {
+      background: #1a2135;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 2rem;
+      color: white;
+      flex: 1;
+      min-width: 160px;
     }
     .status {
-      margin-top: 1rem;
-      font-size: 0.8rem;
-      color: #9ab3e0;
       display: flex;
+      gap: 12px;
       align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #a0b5e0;
     }
-    .indicator {
+    .led {
       width: 10px;
       height: 10px;
       border-radius: 10px;
       background: #4ade80;
-      display: inline-block;
-      transition: 0.1s;
     }
-    .indicator.speaking {
-      background: #facc15;
-      box-shadow: 0 0 6px #facc15;
-      animation: pulse 0.8s infinite;
-    }
+    .led.speaking { background: #facc15; animation: pulse 0.8s infinite; }
     @keyframes pulse {
-      0% { opacity: 0.4; transform: scale(0.8);}
+      0% { opacity: 0.5; transform: scale(0.8);}
       100% { opacity: 1; transform: scale(1.2);}
     }
-    footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: 0.7rem;
-      color: #4a5b82;
-      border-top: 1px solid #20273d;
-      padding-top: 1rem;
-    }
-    .example-buttons {
+    .examples {
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
       margin-top: 12px;
-      flex-wrap: wrap;
     }
-    .example-chip {
-      background: #1e293b;
-      padding: 4px 12px;
+    .example {
+      background: #1e2a3a;
+      padding: 5px 14px;
       border-radius: 30px;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       cursor: pointer;
       transition: 0.1s;
     }
-    .example-chip:hover {
-      background: #2d3a5e;
-    }
-    @media (max-width: 500px) {
-      .card { padding: 1.2rem; }
-      button { padding: 0.5rem 1rem; font-size: 0.8rem; }
+    .example:hover { background: #3b5a7a; }
+    footer {
+      margin-top: 1.8rem;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #5b6e9e;
+      border-top: 1px solid #20273d;
+      padding-top: 1rem;
     }
   </style>
 </head>
 <body>
 <div class="card">
   <h1>
-    🎙️ Text to Speech 
-    <span style="font-size: 1rem; background: #1e293b; padding: 2px 10px; border-radius: 40px;">OpenAI.fm जैसा डेमो</span>
+    🔊 बोलें + 📥 MP3 डाउनलोड
+    <span class="lang-badge">English | Hindi दोनों</span>
   </h1>
-  <div class="sub">अपना टेक्स्ट लिखें, आवाज़ सुनें – बिल्कुल मुफ्त, बिना API के (Web Speech API)</div>
+  <p style="color:#b3c7ff; margin-top: 5px;">✍️ टेक्स्ट लिखें → भाषा चुनें → सुनें या MP3 डाउनलोड करें</p>
 
-  <textarea id="ttsText" rows="4" placeholder="यहाँ कुछ भी लिखें... उदाहरण: नमस्ते, आप कैसे हैं? यह एक बेहतरीन टेक्स्ट-टू-स्पीच डेमो है।"></textarea>
+  <textarea id="ttsText" rows="4" placeholder="Type anything in English or Hindi..."></textarea>
 
-  <div class="control-bar">
-    <select id="voiceSelect" class="voice-selector"></select>
-    <div style="display: flex; gap: 8px;">
-      <button id="speakBtn">🔊 बोलें</button>
-      <button id="stopBtn" class="btn-stop">⏹️ रोकें</button>
+  <div class="controls">
+    <select id="languageSelect" class="lang-selector">
+      <option value="en">🇬🇧 English (अंग्रेज़ी)</option>
+      <option value="hi">🇮🇳 Hindi (हिंदी)</option>
+    </select>
+    <div>
+      <button id="speakBtn" class="btn-speak">🔊 बोलें (Speak)</button>
+      <button id="downloadBtn" class="btn-download">📥 MP3 डाउनलोड करें</button>
     </div>
   </div>
 
-  <div class="example-buttons">
-    <span class="example-chip" data-text="नमस्ते दुनिया! यह एक परीक्षण है।">🌍 नमस्ते</span>
-    <span class="example-chip" data-text="OpenAI का टेक्स्ट टू स्पीच मॉडल बहुत उन्नत है।">🤖 AI आवाज़</span>
-    <span class="example-chip" data-text="आज मौसम बहुत सुहावना है, चलो कुछ नया सीखें।">☀️ मौसम</span>
-    <span class="example-chip" data-text="1234, एक दो तीन चार, यह नंबर पढ़ने का टेस्ट है।">🔢 नंबर</span>
+  <div class="voice-row">
+    <span style="color:#bbd7ff;">🎙️ आवाज़ चुनें:</span>
+    <select id="voiceSelect"></select>
+    <div class="status">
+      <span class="led" id="ledIndicator"></span>
+      <span id="statusMsg">तैयार</span>
+    </div>
   </div>
 
-  <div class="status">
-    <div><span class="indicator" id="speakIndicator"></span> <span id="statusText">तैयार</span></div>
-    <div id="voiceInfo" style="font-size:0.7rem;">🔊 डिफ़ॉल्ट आवाज़</div>
+  <div class="examples">
+    <span class="example" data-text="Hello, how are you? This is an English test." data-lang="en">🇬🇧 Hello English</span>
+    <span class="example" data-text="नमस्ते, मैं हिंदी में बोल रहा हूँ। यह परीक्षण है।" data-lang="hi">🇮🇳 नमस्ते हिंदी</span>
+    <span class="example" data-text="The weather is beautiful today." data-lang="en">☀️ Weather</span>
+    <span class="example" data-text="कृपया मेरी आवाज़ को MP3 में डाउनलोड करें।" data-lang="hi">📥 हिंदी डाउनलोड</span>
   </div>
+
   <footer>
-    💡 यह आपके ब्राउज़र की built-in speech synthesis का उपयोग करता है। कोई API key नहीं चाहिए। 
-    <br>ऑनलाइन OpenAI API की तरह ही काम करता है – एकदम सरल और तेज़।
+    ⚡ <strong>English बोलने के लिए:</strong> भाषा "English" चुनें और कोई English टेक्स्ट लिखें।<br>
+    💡 MP3 डाउनलोड: Google TTS का उपयोग करता है – सही भाषा में ऑडियो मिलेगा।
   </footer>
 </div>
 
@@ -204,130 +206,166 @@
   (function() {
     const textarea = document.getElementById('ttsText');
     const speakBtn = document.getElementById('speakBtn');
-    const stopBtn = document.getElementById('stopBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const languageSelect = document.getElementById('languageSelect');
     const voiceSelect = document.getElementById('voiceSelect');
-    const statusSpan = document.getElementById('statusText');
-    const indicator = document.getElementById('speakIndicator');
-    const voiceInfoSpan = document.getElementById('voiceInfo');
+    const statusSpan = document.getElementById('statusMsg');
+    const led = document.getElementById('ledIndicator');
     
+    let availableVoices = [];
     let currentUtterance = null;
-    let voicesList = [];
     
-    // populate voices
+    // ---- Load browser voices ----
     function loadVoices() {
-      voicesList = window.speechSynthesis.getVoices();
-      if (!voicesList.length) {
-        // some browsers load async
+      availableVoices = window.speechSynthesis.getVoices();
+      if (!availableVoices.length) {
         setTimeout(loadVoices, 50);
         return;
       }
-      // filter for Hindi / English / any
-      voiceSelect.innerHTML = '';
-      voicesList.forEach((voice, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = `${voice.name} (${voice.lang})`;
-        // try to set default as Google हिंदी or English nice voice
-        if (voice.lang === 'hi-IN' || voice.name.includes('Google हिन्दी') || voice.name.includes('Microsoft Hemant')) {
-          option.selected = true;
-        }
-        voiceSelect.appendChild(option);
-      });
-      if (voiceSelect.options.length > 0 && !voiceSelect.querySelector('option[selected]')) {
-        voiceSelect.options[0].selected = true;
-      }
-      updateVoiceInfo();
+      populateVoiceList();
     }
     
-    function updateVoiceInfo() {
-      const selectedIdx = voiceSelect.value;
-      if (voicesList[selectedIdx]) {
-        voiceInfoSpan.innerHTML = `🎤 ${voicesList[selectedIdx].name} (${voicesList[selectedIdx].lang})`;
+    function populateVoiceList() {
+      const selectedLang = languageSelect.value;
+      voiceSelect.innerHTML = '';
+      const filtered = availableVoices.filter(v => v.lang.startsWith(selectedLang));
+      const listToShow = filtered.length ? filtered : availableVoices;
+      
+      listToShow.forEach((voice, idx) => {
+        const option = document.createElement('option');
+        option.value = idx;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        // auto-pick a good default
+        if (voice.lang === 'en-US' && voice.name.includes('Google')) option.selected = true;
+        if (voice.lang === 'hi-IN') option.selected = true;
+        voiceSelect.appendChild(option);
+      });
+      if (voiceSelect.options.length && !voiceSelect.querySelector('option[selected]')) {
+        voiceSelect.options[0].selected = true;
       }
+    }
+    
+    languageSelect.addEventListener('change', () => {
+      populateVoiceList();
+      updateStatus('भाषा बदली', false);
+    });
+    
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    loadVoices();
+    
+    function updateStatus(msg, isSpeaking) {
+      statusSpan.innerText = msg;
+      if (isSpeaking) led.classList.add('speaking');
+      else led.classList.remove('speaking');
     }
     
     function stopSpeaking() {
       if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
         window.speechSynthesis.cancel();
       }
-      if (currentUtterance) {
-        currentUtterance = null;
-      }
-      updateStatus('रोका गया', false);
+      currentUtterance = null;
     }
     
-    function updateStatus(text, isSpeaking) {
-      statusSpan.innerText = text;
-      if (isSpeaking) {
-        indicator.classList.add('speaking');
-      } else {
-        indicator.classList.remove('speaking');
-      }
-    }
-    
-    function speakText() {
+    // ---- Speak using selected voice ----
+    function speakNow() {
       let text = textarea.value.trim();
       if (!text) {
-        text = "कृपया कुछ टेक्स्ट लिखें।";
+        text = languageSelect.value === 'en' ? "Please write something." : "कृपया कुछ लिखें।";
         textarea.value = text;
       }
-      
-      // stop any ongoing speech
       stopSpeaking();
       
       const utterance = new SpeechSynthesisUtterance(text);
       const selectedIdx = voiceSelect.value;
-      if (voicesList[selectedIdx]) {
-        utterance.voice = voicesList[selectedIdx];
+      if (availableVoices[selectedIdx]) {
+        utterance.voice = availableVoices[selectedIdx];
+        utterance.lang = utterance.voice.lang;
+      } else {
+        utterance.lang = languageSelect.value;
       }
-      utterance.rate = 0.95;   // natural speed
+      utterance.rate = 0.95;
       utterance.pitch = 1.0;
-      utterance.volume = 1;
       
       utterance.onstart = () => {
         currentUtterance = utterance;
-        updateStatus('बोल रहा हूँ... 🎵', true);
+        updateStatus('🔊 बोल रहा हूँ...', true);
       };
       utterance.onend = () => {
         currentUtterance = null;
-        updateStatus('समाप्त ✓', false);
+        updateStatus('✅ समाप्त', false);
         setTimeout(() => {
-          if (statusSpan.innerText === 'समाप्त ✓') updateStatus('तैयार', false);
+          if (statusSpan.innerText === '✅ समाप्त') updateStatus('तैयार', false);
         }, 1000);
       };
-      utterance.onerror = (err) => {
-        console.error(err);
-        currentUtterance = null;
-        updateStatus('त्रुटि: आवाज़ नहीं बोली', false);
+      utterance.onerror = () => {
+        updateStatus('❌ त्रुटि', false);
       };
-      
       window.speechSynthesis.speak(utterance);
     }
     
-    // load voices dynamically (chrome needs event)
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
+    speakBtn.addEventListener('click', speakNow);
+    
+    // ---- Download MP3 using Google TTS with correct language ----
+    async function downloadMp3() {
+      let text = textarea.value.trim();
+      if (!text) {
+        alert(languageSelect.value === 'en' ? "Please enter some text first." : "कृपया पहले कुछ टेक्स्ट लिखें।");
+        return;
+      }
+      const lang = languageSelect.value; // 'en' or 'hi'
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=tw-ob`;
+      
+      updateStatus('⏳ MP3 बन रहा है...', false);
+      downloadBtn.disabled = true;
+      downloadBtn.style.opacity = '0.6';
+      
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('TTS service error');
+        const blob = await res.blob();
+        const audioUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = audioUrl;
+        a.download = `speech_${lang}_${Date.now()}.mp3`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(audioUrl);
+        updateStatus('📥 डाउनलोड शुरू!', false);
+        setTimeout(() => {
+          if (statusSpan.innerText === '📥 डाउनलोड शुरू!') updateStatus('तैयार', false);
+        }, 2000);
+      } catch (err) {
+        console.error(err);
+        alert(lang === 'en' ? "Download failed. Check internet." : "डाउनलोड विफल। इंटरनेट चेक करें।");
+        updateStatus('❌ डाउनलोड फेल', false);
+      } finally {
+        downloadBtn.disabled = false;
+        downloadBtn.style.opacity = '1';
+      }
     }
-    loadVoices();
     
-    speakBtn.addEventListener('click', speakText);
-    stopBtn.addEventListener('click', stopSpeaking);
-    voiceSelect.addEventListener('change', updateVoiceInfo);
+    downloadBtn.addEventListener('click', downloadMp3);
     
-    // example chips
-    document.querySelectorAll('.example-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        const sampleText = chip.getAttribute('data-text');
-        if (sampleText) {
-          textarea.value = sampleText;
-          speakText(); // auto speak
-        }
+    // Example chips set text + auto language + speak
+    document.querySelectorAll('.example').forEach(ex => {
+      ex.addEventListener('click', () => {
+        const sampleText = ex.getAttribute('data-text');
+        const sampleLang = ex.getAttribute('data-lang');
+        if (sampleText) textarea.value = sampleText;
+        if (sampleLang) languageSelect.value = sampleLang;
+        populateVoiceList();  // refresh voices based on language
+        speakNow(); // auto speak to demonstrate
       });
     });
     
-    // initial demo text to show something meaningful
+    // initial demo text in English so that English works clearly
     if (textarea.value.trim() === "") {
-      textarea.value = "नमस्ते! यह OpenAI.fm स्टाइल टेक्स्ट-टू-स्पीच डेमो है। आप कोई भी वाक्य लिख सकते हैं और बोलें बटन दबा सकते हैं। 🚀";
+      textarea.value = "Hello! This is an English text to speech demo. You can also type Hindi and download MP3.";
+      languageSelect.value = "en";
+      populateVoiceList();
     }
   })();
 </script>
