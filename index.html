@@ -1,519 +1,334 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🧮 Advanced Scientific Calculator</title>
+  <title>🎙️ Text to Speech Demo – OpenAI.fm जैसा</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(145deg, #0a0c12 0%, #12161f 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
       padding: 20px;
     }
-
-    /* Calculator container – compact but fully featured */
-    .calc {
-      max-width: 460px;
+    .card {
+      max-width: 700px;
       width: 100%;
-      background: rgba(15, 23, 42, 0.9);
-      backdrop-filter: blur(10px);
+      background: rgba(20, 25, 40, 0.85);
+      backdrop-filter: blur(12px);
       border-radius: 2rem;
-      padding: 1.2rem;
-      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
     }
-
-    /* Display */
-    .display {
-      background: #0f1722;
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #fff, #a0c4ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sub {
+      color: #8a9bcf;
+      margin-bottom: 1.8rem;
+      border-left: 3px solid #3b82f6;
+      padding-left: 1rem;
+      font-size: 0.9rem;
+    }
+    textarea {
+      width: 100%;
+      background: #0f111c;
+      border: 1px solid #2a3348;
       border-radius: 1.5rem;
       padding: 1rem 1.2rem;
-      margin-bottom: 1.5rem;
-      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
-    }
-
-    .expression {
-      width: 100%;
-      background: transparent;
-      border: none;
-      color: #94a3b8;
-      font-family: 'Fira Code', monospace;
       font-size: 1rem;
-      text-align: right;
+      font-family: inherit;
+      color: #f0f3ff;
+      resize: vertical;
       outline: none;
-      resize: none;
-      overflow-y: auto;
-      word-break: break-all;
+      transition: 0.2s;
     }
-
-    .result {
-      color: #f1f5f9;
-      font-size: 2rem;
-      font-weight: 700;
-      font-family: monospace;
-      text-align: right;
-      word-break: break-word;
-      border-top: 1px solid #334155;
-      margin-top: 8px;
-      padding-top: 8px;
+    textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
     }
-
-    /* Toolbar */
-    .toolbar {
+    .control-bar {
+      margin: 1.5rem 0 1rem;
       display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
       justify-content: space-between;
-      margin-bottom: 1rem;
+    }
+    .voice-selector {
+      background: #171e2c;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      border: none;
+      color: white;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }
+    button {
+      background: #3b82f6;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    button:active {
+      transform: translateY(2px);
+    }
+    .btn-secondary {
+      background: #2d3a5e;
+    }
+    .btn-stop {
+      background: #dc2626;
+    }
+    .status {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: #9ab3e0;
+      display: flex;
+      align-items: center;
       gap: 10px;
       flex-wrap: wrap;
+      justify-content: space-between;
     }
-
-    .mode-group {
-      background: #1e293b;
-      border-radius: 3rem;
+    .indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 10px;
+      background: #4ade80;
+      display: inline-block;
+      transition: 0.1s;
+    }
+    .indicator.speaking {
+      background: #facc15;
+      box-shadow: 0 0 6px #facc15;
+      animation: pulse 0.8s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.8);}
+      100% { opacity: 1; transform: scale(1.2);}
+    }
+    footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #4a5b82;
+      border-top: 1px solid #20273d;
+      padding-top: 1rem;
+    }
+    .example-buttons {
       display: flex;
-      padding: 2px;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
     }
-
-    .mode-btn {
-      background: transparent;
-      border: none;
-      padding: 0.3rem 1rem;
-      border-radius: 2rem;
-      font-size: 0.75rem;
-      font-weight: bold;
-      color: #cbd5e1;
+    .example-chip {
+      background: #1e293b;
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 0.7rem;
       cursor: pointer;
       transition: 0.1s;
     }
-
-    .mode-btn.active {
-      background: #3b82f6;
-      color: white;
-      box-shadow: 0 1px 4px #3b82f680;
+    .example-chip:hover {
+      background: #2d3a5e;
     }
-
-    .mem-group {
-      background: #1e293b;
-      border-radius: 2rem;
-      display: flex;
-      gap: 4px;
-      padding: 0 8px;
-    }
-
-    .mem-btn {
-      background: transparent;
-      border: none;
-      padding: 0.3rem 0.7rem;
-      border-radius: 2rem;
-      color: #a5f3fc;
-      font-weight: 600;
-      font-size: 0.7rem;
-      cursor: pointer;
-    }
-
-    .mem-btn:active {
-      background: #334155;
-    }
-
-    /* Button grid */
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-    }
-
-    button {
-      background: #1e293b;
-      border: none;
-      padding: 12px 0;
-      border-radius: 1.2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      color: #e2e8f0;
-      cursor: pointer;
-      transition: all 0.05s linear;
-      font-family: monospace;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-    }
-
-    button:active {
-      transform: translateY(2px);
-      background: #0f172a;
-    }
-
-    .func {
-      background: #2d3a52;
-      color: #7bc5ff;
-      font-size: 0.85rem;
-    }
-
-    .op {
-      background: #334155;
-      color: #facc15;
-      font-size: 1.2rem;
-    }
-
-    .equal {
-      background: #3b82f6;
-      color: white;
-      font-size: 1.2rem;
-    }
-
-    .clear {
-      background: #b91c1c;
-      color: white;
-    }
-
-    .small-text {
-      font-size: 0.75rem;
-    }
-
-    footer {
-      font-size: 0.6rem;
-      text-align: center;
-      margin-top: 1.2rem;
-      color: #64748b;
+    @media (max-width: 500px) {
+      .card { padding: 1.2rem; }
+      button { padding: 0.5rem 1rem; font-size: 0.8rem; }
     }
   </style>
 </head>
 <body>
-<div class="calc">
-  <div class="display">
-    <textarea class="expression" id="expr" rows="1" readonly placeholder="0"></textarea>
-    <div class="result" id="result">0</div>
-  </div>
+<div class="card">
+  <h1>
+    🎙️ Text to Speech 
+    <span style="font-size: 1rem; background: #1e293b; padding: 2px 10px; border-radius: 40px;">OpenAI.fm जैसा डेमो</span>
+  </h1>
+  <div class="sub">अपना टेक्स्ट लिखें, आवाज़ सुनें – बिल्कुल मुफ्त, बिना API के (Web Speech API)</div>
 
-  <div class="toolbar">
-    <div class="mode-group">
-      <button class="mode-btn active" id="degMode">DEG</button>
-      <button class="mode-btn" id="radMode">RAD</button>
-    </div>
-    <div class="mem-group">
-      <button class="mem-btn" id="memStore">MS</button>
-      <button class="mem-btn" id="memRecall">MR</button>
-      <button class="mem-btn" id="memPlus">M+</button>
-      <button class="mem-btn" id="memClear">MC</button>
+  <textarea id="ttsText" rows="4" placeholder="यहाँ कुछ भी लिखें... उदाहरण: नमस्ते, आप कैसे हैं? यह एक बेहतरीन टेक्स्ट-टू-स्पीच डेमो है।"></textarea>
+
+  <div class="control-bar">
+    <select id="voiceSelect" class="voice-selector"></select>
+    <div style="display: flex; gap: 8px;">
+      <button id="speakBtn">🔊 बोलें</button>
+      <button id="stopBtn" class="btn-stop">⏹️ रोकें</button>
     </div>
   </div>
 
-  <div class="buttons">
-    <!-- Row 1 -->
-    <button class="func" data-func="sin">sin</button>
-    <button class="func" data-func="cos">cos</button>
-    <button class="func" data-func="tan">tan</button>
-    <button class="func" data-func="ln">ln</button>
-    <button class="func" data-func="log">log</button>
-
-    <!-- Row 2 -->
-    <button class="func" data-func="asin">asin</button>
-    <button class="func" data-func="acos">acos</button>
-    <button class="func" data-func="atan">atan</button>
-    <button class="func" data-func="sqrt">√</button>
-    <button class="func" data-func="pow">xʸ</button>
-
-    <!-- Row 3 -->
-    <button data-num="7">7</button>
-    <button data-num="8">8</button>
-    <button data-num="9">9</button>
-    <button class="op" data-op="/">÷</button>
-    <button class="clear" data-action="clear">C</button>
-
-    <!-- Row 4 -->
-    <button data-num="4">4</button>
-    <button data-num="5">5</button>
-    <button data-num="6">6</button>
-    <button class="op" data-op="*">×</button>
-    <button class="func" data-action="del">⌫</button>
-
-    <!-- Row 5 -->
-    <button data-num="1">1</button>
-    <button data-num="2">2</button>
-    <button data-num="3">3</button>
-    <button class="op" data-op="-">−</button>
-    <button class="func" data-paren="(">(</button>
-
-    <!-- Row 6 -->
-    <button data-num="0">0</button>
-    <button data-num=".">.</button>
-    <button class="func" data-const="π">π</button>
-    <button class="op" data-op="+">+</button>
-    <button class="func" data-paren=")">)</button>
-
-    <!-- Row 7 -->
-    <button class="func" data-func="fact">n!</button>
-    <button class="func" data-const="e">e</button>
-    <button class="func" data-func="square">x²</button>
-    <button class="func" data-func="cube">x³</button>
-    <button class="equal" data-action="equal">=</button>
+  <div class="example-buttons">
+    <span class="example-chip" data-text="नमस्ते दुनिया! यह एक परीक्षण है।">🌍 नमस्ते</span>
+    <span class="example-chip" data-text="OpenAI का टेक्स्ट टू स्पीच मॉडल बहुत उन्नत है।">🤖 AI आवाज़</span>
+    <span class="example-chip" data-text="आज मौसम बहुत सुहावना है, चलो कुछ नया सीखें।">☀️ मौसम</span>
+    <span class="example-chip" data-text="1234, एक दो तीन चार, यह नंबर पढ़ने का टेस्ट है।">🔢 नंबर</span>
   </div>
-  <footer>🔬 Advanced | DEG/RAD | Trig, Log, Factorial, Power | Memory</footer>
+
+  <div class="status">
+    <div><span class="indicator" id="speakIndicator"></span> <span id="statusText">तैयार</span></div>
+    <div id="voiceInfo" style="font-size:0.7rem;">🔊 डिफ़ॉल्ट आवाज़</div>
+  </div>
+  <footer>
+    💡 यह आपके ब्राउज़र की built-in speech synthesis का उपयोग करता है। कोई API key नहीं चाहिए। 
+    <br>ऑनलाइन OpenAI API की तरह ही काम करता है – एकदम सरल और तेज़।
+  </footer>
 </div>
 
 <script>
   (function() {
-    // DOM elements
-    const exprInput = document.getElementById('expr');
-    const resultDiv = document.getElementById('result');
+    const textarea = document.getElementById('ttsText');
+    const speakBtn = document.getElementById('speakBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const statusSpan = document.getElementById('statusText');
+    const indicator = document.getElementById('speakIndicator');
+    const voiceInfoSpan = document.getElementById('voiceInfo');
     
-    // State
-    let expression = "";
-    let memory = 0;
-    let isDeg = true;   // true = degrees, false = radians
+    let currentUtterance = null;
+    let voicesList = [];
     
-    // Helper: update display
-    function updateDisplay() {
-      exprInput.value = expression === "" ? "0" : expression;
-      exprInput.style.height = "auto";
-      exprInput.style.height = Math.min(50, exprInput.scrollHeight) + "px";
-    }
-    
-    // Evaluate safely
-    function evaluate(expr) {
-      if (expr.trim() === "") return "0";
-      
-      // Preprocess
-      let str = expr;
-      // constants
-      str = str.replace(/π/g, 'Math.PI');
-      str = str.replace(/\be\b/g, 'Math.E');
-      // power operator
-      str = str.replace(/\^/g, '**');
-      // squares and cubes (x², x³)
-      str = str.replace(/(\d+(?:\.\d+)?|\))\s*²/g, '$1**2');
-      str = str.replace(/(\d+(?:\.\d+)?|\))\s*³/g, '$1**3');
-      
-      // factorial for numbers like 5!
-      str = str.replace(/(\d+(?:\.\d+)?)\s*\!/g, function(match, num) {
-        let n = parseFloat(num);
-        if (isNaN(n) || n < 0 || Math.floor(n) !== n) return 'NaN';
-        let f = 1;
-        for (let i = 2; i <= n; i++) f *= i;
-        return f;
-      });
-      // factorial for (expression)!
-      str = str.replace(/\(([^()]+)\)\s*\!/g, function(match, inner) {
-        try {
-          let val = Function('"use strict"; return (' + inner + ')')();
-          if (isNaN(val) || val < 0 || Math.floor(val) !== val) return 'NaN';
-          let f = 1;
-          for (let i = 2; i <= val; i++) f *= i;
-          return f;
-        } catch(e) { return 'NaN'; }
-      });
-      
-      // Trig functions with degree/radian conversion
-      const toRad = (deg) => deg * Math.PI / 180;
-      const trigWrapper = (func, val) => {
-        if (isDeg) {
-          switch(func) {
-            case 'sin': return Math.sin(toRad(val));
-            case 'cos': return Math.cos(toRad(val));
-            case 'tan': return Math.tan(toRad(val));
-            case 'asin': return Math.asin(val) * 180 / Math.PI;
-            case 'acos': return Math.acos(val) * 180 / Math.PI;
-            case 'atan': return Math.atan(val) * 180 / Math.PI;
-            default: return NaN;
-          }
-        } else {
-          switch(func) {
-            case 'sin': return Math.sin(val);
-            case 'cos': return Math.cos(val);
-            case 'tan': return Math.tan(val);
-            case 'asin': return Math.asin(val);
-            case 'acos': return Math.acos(val);
-            case 'atan': return Math.atan(val);
-            default: return NaN;
-          }
-        }
-      };
-      
-      // Replace trig function calls with a custom evaluator
-      let processed = str;
-      processed = processed.replace(/sin\(/g, '$$sin$$(');
-      processed = processed.replace(/cos\(/g, '$$cos$$(');
-      processed = processed.replace(/tan\(/g, '$$tan$$(');
-      processed = processed.replace(/asin\(/g, '$$asin$$(');
-      processed = processed.replace(/acos\(/g, '$$acos$$(');
-      processed = processed.replace(/atan\(/g, '$$atan$$(');
-      processed = processed.replace(/ln\(/g, 'Math.log(');
-      processed = processed.replace(/log\(/g, 'Math.log10(');
-      processed = processed.replace(/√\(/g, 'Math.sqrt(');
-      
-      // Build evaluation function with custom trig
-      const evalFunc = new Function('__sin', '__cos', '__tan', '__asin', '__acos', '__atan', 'Math',
-        `try { return (${processed}); } catch(e) { return NaN; }`);
-      
-      const customSin = (x) => trigWrapper('sin', x);
-      const customCos = (x) => trigWrapper('cos', x);
-      const customTan = (x) => trigWrapper('tan', x);
-      const customAsin = (x) => trigWrapper('asin', x);
-      const customAcos = (x) => trigWrapper('acos', x);
-      const customAtan = (x) => trigWrapper('atan', x);
-      
-      let result = evalFunc(customSin, customCos, customTan, customAsin, customAcos, customAtan, Math);
-      if (isNaN(result) || !isFinite(result)) return "Error";
-      // Format: remove trailing .0 if integer
-      if (Math.abs(result - Math.round(result)) < 1e-12) return result.toFixed(0);
-      return parseFloat(result.toFixed(10)).toString();
-    }
-    
-    // Compute and show result in resultDiv
-    function computeAndDisplay() {
-      if (expression === "") {
-        resultDiv.innerText = "0";
+    // populate voices
+    function loadVoices() {
+      voicesList = window.speechSynthesis.getVoices();
+      if (!voicesList.length) {
+        // some browsers load async
+        setTimeout(loadVoices, 50);
         return;
       }
-      let res = evaluate(expression);
-      if (res === "Error") resultDiv.innerText = "⚠️ Error";
-      else resultDiv.innerText = res;
+      // filter for Hindi / English / any
+      voiceSelect.innerHTML = '';
+      voicesList.forEach((voice, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        // try to set default as Google हिंदी or English nice voice
+        if (voice.lang === 'hi-IN' || voice.name.includes('Google हिन्दी') || voice.name.includes('Microsoft Hemant')) {
+          option.selected = true;
+        }
+        voiceSelect.appendChild(option);
+      });
+      if (voiceSelect.options.length > 0 && !voiceSelect.querySelector('option[selected]')) {
+        voiceSelect.options[0].selected = true;
+      }
+      updateVoiceInfo();
     }
     
-    // Append to expression
-    function append(val) {
-      if (expression === "0" && /[0-9(]/.test(val)) {
-        expression = val;
+    function updateVoiceInfo() {
+      const selectedIdx = voiceSelect.value;
+      if (voicesList[selectedIdx]) {
+        voiceInfoSpan.innerHTML = `🎤 ${voicesList[selectedIdx].name} (${voicesList[selectedIdx].lang})`;
+      }
+    }
+    
+    function stopSpeaking() {
+      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+        window.speechSynthesis.cancel();
+      }
+      if (currentUtterance) {
+        currentUtterance = null;
+      }
+      updateStatus('रोका गया', false);
+    }
+    
+    function updateStatus(text, isSpeaking) {
+      statusSpan.innerText = text;
+      if (isSpeaking) {
+        indicator.classList.add('speaking');
       } else {
-        expression += val;
-      }
-      updateDisplay();
-      computeAndDisplay();
-    }
-    
-    // Clear everything
-    function clearAll() {
-      expression = "";
-      updateDisplay();
-      resultDiv.innerText = "0";
-    }
-    
-    // Delete last character
-    function deleteLast() {
-      expression = expression.slice(0, -1);
-      updateDisplay();
-      computeAndDisplay();
-    }
-    
-    // Add function like sin( , cos( etc
-    function addFunction(fn) {
-      append(fn + "(");
-    }
-    
-    // Actions from buttons
-    function performAction(action) {
-      switch(action) {
-        case 'sin': addFunction('sin'); break;
-        case 'cos': addFunction('cos'); break;
-        case 'tan': addFunction('tan'); break;
-        case 'asin': addFunction('asin'); break;
-        case 'acos': addFunction('acos'); break;
-        case 'atan': addFunction('atan'); break;
-        case 'ln': addFunction('ln'); break;
-        case 'log': addFunction('log'); break;
-        case 'sqrt': append('√('); break;
-        case 'pow': append('^'); break;
-        case 'fact': append('!'); break;
-        case 'square': append('²'); break;
-        case 'cube': append('³'); break;
-        case 'equal':
-          let res = evaluate(expression);
-          if (res !== "Error" && !isNaN(parseFloat(res))) {
-            expression = res;
-            updateDisplay();
-            resultDiv.innerText = expression;
-          } else {
-            resultDiv.innerText = "❗ Invalid";
-          }
-          break;
-        case 'clear': clearAll(); break;
-        case 'del': deleteLast(); break;
-        default: break;
+        indicator.classList.remove('speaking');
       }
     }
     
-    // Memory functions
-    function memStore() {
-      let currentVal = resultDiv.innerText;
-      if (currentVal !== "⚠️ Error" && currentVal !== "❗ Invalid" && !isNaN(parseFloat(currentVal))) {
-        memory = parseFloat(currentVal);
-      } else {
-        let evalNow = evaluate(expression);
-        if (evalNow !== "Error") memory = parseFloat(evalNow);
-        else memory = 0;
+    function speakText() {
+      let text = textarea.value.trim();
+      if (!text) {
+        text = "कृपया कुछ टेक्स्ट लिखें।";
+        textarea.value = text;
       }
-    }
-    function memRecall() { append(memory.toString()); }
-    function memPlus() {
-      let currentVal = resultDiv.innerText;
-      if (currentVal !== "⚠️ Error" && !isNaN(parseFloat(currentVal))) memory += parseFloat(currentVal);
-      else {
-        let evalNow = evaluate(expression);
-        if (evalNow !== "Error") memory += parseFloat(evalNow);
+      
+      // stop any ongoing speech
+      stopSpeaking();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      const selectedIdx = voiceSelect.value;
+      if (voicesList[selectedIdx]) {
+        utterance.voice = voicesList[selectedIdx];
       }
+      utterance.rate = 0.95;   // natural speed
+      utterance.pitch = 1.0;
+      utterance.volume = 1;
+      
+      utterance.onstart = () => {
+        currentUtterance = utterance;
+        updateStatus('बोल रहा हूँ... 🎵', true);
+      };
+      utterance.onend = () => {
+        currentUtterance = null;
+        updateStatus('समाप्त ✓', false);
+        setTimeout(() => {
+          if (statusSpan.innerText === 'समाप्त ✓') updateStatus('तैयार', false);
+        }, 1000);
+      };
+      utterance.onerror = (err) => {
+        console.error(err);
+        currentUtterance = null;
+        updateStatus('त्रुटि: आवाज़ नहीं बोली', false);
+      };
+      
+      window.speechSynthesis.speak(utterance);
     }
-    function memClear() { memory = 0; }
     
-    // Toggle degree/radian
-    function setDeg() {
-      isDeg = true;
-      document.getElementById('degMode').classList.add('active');
-      document.getElementById('radMode').classList.remove('active');
-      computeAndDisplay();
+    // load voices dynamically (chrome needs event)
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
     }
-    function setRad() {
-      isDeg = false;
-      document.getElementById('radMode').classList.add('active');
-      document.getElementById('degMode').classList.remove('active');
-      computeAndDisplay();
+    loadVoices();
+    
+    speakBtn.addEventListener('click', speakText);
+    stopBtn.addEventListener('click', stopSpeaking);
+    voiceSelect.addEventListener('change', updateVoiceInfo);
+    
+    // example chips
+    document.querySelectorAll('.example-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const sampleText = chip.getAttribute('data-text');
+        if (sampleText) {
+          textarea.value = sampleText;
+          speakText(); // auto speak
+        }
+      });
+    });
+    
+    // initial demo text to show something meaningful
+    if (textarea.value.trim() === "") {
+      textarea.value = "नमस्ते! यह OpenAI.fm स्टाइल टेक्स्ट-टू-स्पीच डेमो है। आप कोई भी वाक्य लिख सकते हैं और बोलें बटन दबा सकते हैं। 🚀";
     }
-    
-    // --- Event Binding ---
-    // Numbers
-    document.querySelectorAll('[data-num]').forEach(btn => {
-      btn.addEventListener('click', () => append(btn.getAttribute('data-num')));
-    });
-    // Operators
-    document.querySelectorAll('[data-op]').forEach(btn => {
-      btn.addEventListener('click', () => append(btn.getAttribute('data-op')));
-    });
-    // Parentheses
-    document.querySelectorAll('[data-paren]').forEach(btn => {
-      btn.addEventListener('click', () => append(btn.getAttribute('data-paren')));
-    });
-    // Constants
-    document.querySelectorAll('[data-const]').forEach(btn => {
-      btn.addEventListener('click', () => append(btn.getAttribute('data-const')));
-    });
-    // Functions (sin, cos, etc)
-    document.querySelectorAll('[data-func]').forEach(btn => {
-      btn.addEventListener('click', () => performAction(btn.getAttribute('data-func')));
-    });
-    // Actions (C, del, =)
-    document.querySelectorAll('[data-action]').forEach(btn => {
-      btn.addEventListener('click', () => performAction(btn.getAttribute('data-action')));
-    });
-    // Memory buttons
-    document.getElementById('memStore').addEventListener('click', memStore);
-    document.getElementById('memRecall').addEventListener('click', memRecall);
-    document.getElementById('memPlus').addEventListener('click', memPlus);
-    document.getElementById('memClear').addEventListener('click', memClear);
-    // Mode buttons
-    document.getElementById('degMode').addEventListener('click', setDeg);
-    document.getElementById('radMode').addEventListener('click', setRad);
-    
-    // Initial demo to show it works: sin(30) in DEG should give 0.5
-    expression = "sin(30)";
-    updateDisplay();
-    computeAndDisplay();
   })();
 </script>
 </body>
